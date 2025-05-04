@@ -1,0 +1,6 @@
+[doc]
+# Skip doc tests entirely when running `cargo test`
+test = false
+
+# Additional options for when doctests are run
+no-run = true

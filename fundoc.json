@@ -1,0 +1,16 @@
+{
+  "docs_folder": "./docs_src",
+  "project_path": "./src",
+  "files_patterns": [
+    "**/*.rs"
+  ],
+  "repositories": null,
+  "repository_host": "https://github.com/entrepeneur4lyf/mcp_daemon/blob/main/",
+  "comment_start_string": null,
+  "comment_prefix": null,
+  "comment_end_string": null,
+  "mdbook": true,
+  "book_name": "mcp_daemon",
+  "book_build_dir": "./docs",
+  "plugins_dir": "./plugins"
+}

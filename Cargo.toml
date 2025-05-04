@@ -1,0 +1,26 @@
+[package]
+name = "mcp_daemon"
+version = "0.3.0"
+edition = "2024"
+repository = "https://github.com/entrepeneur4lyf/mcp_daemon"
+license = "MIT"
+authors = ["Shawn McAllister - https://github.com/entrepeneur4lyf"]
+homepage = "https://github.com/entrepeneur4lyf/mcp_daemon"
+keywords = ["async", "mcp", "protocol", "daemon", "extended"]
+categories = ["asynchronous", "development-tools", "web-programming::http-client", "web-programming::http-server", "web-programming::websocket"]
+readme = "README.md"
+
+[lib]
+doctest = false
+
+[dependencies]
+async-trait = "0.1.81"
+base64 = "0.22.1"
+derive-ex = "0.1.8"
+jsoncall = "0.0.3"
+parse-display = "0.10.0"
+schemars = "0.8.22"
+serde = { version = "1.0.219", features = ["derive"] } 
+serde_json = "1.0.140"
+tokio = { version = "1.44.1", features = ["macros", "rt-multi-thread"] }
+url = "2.5.4"

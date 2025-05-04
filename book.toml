@@ -1,0 +1,12 @@
+[book]
+authors = []
+language = "en"
+multilingual = false
+src = "./docs_src"
+title = "mcp_daemon"
+
+[build]
+build-dir = "./docs"
+create-missing = true
+extra-watch-dirs = []
+use-default-preprocessors = true
