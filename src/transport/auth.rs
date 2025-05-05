@@ -74,15 +74,16 @@ pub async fn server_auth_handshake(
     let challenge_json = serde_json::to_string(&auth_challenge)
         .map_err(|e| crate::Error::AuthenticationError(format!("Failed to serialize challenge: {}", e)))?;
 
-    stream.write_all(challenge_json.as_bytes()).await
+    sender.text(challenge_json).await
         .map_err(|e| crate::Error::AuthenticationError(format!("Failed to send challenge: {}", e)))?;
-    stream.write_all(b"\n").await
-        .map_err(|e| crate::Error::AuthenticationError(format!("Failed to send challenge newline: {}", e)))?;
 
-    let mut client_response_json = String::new();
-    let mut reader = tokio::io::BufReader::new(stream);
-    reader.read_line(&mut client_response_json).await
-        .map_err(|e| crate::Error::AuthenticationError(format!("Failed to receive client response: {}", e)))?;
+    let msg = stream.next().await
+        .ok_or(crate::Error::AuthenticationError("Connection closed during handshake".into()))??;
+    
+    let client_response_json = match msg {
+        actix_ws::Message::Text(text) => text,
+        _ => return Err(crate::Error::AuthenticationError("Unexpected message type during handshake".into())),
+    };
 
     let client_response: AuthResponse = serde_json::from_str(&client_response_json.trim())
         .map_err(|e| crate::Error::AuthenticationError(format!("Failed to deserialize client response: {}", e)))?;

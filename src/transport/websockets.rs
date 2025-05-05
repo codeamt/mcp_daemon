@@ -22,14 +22,14 @@ impl Transport for WebSocketsTransport {
 
     async fn receive(&mut self) -> Result<Option<String>> {
         let mut stream = self.session.message_stream();
-        while let Some(Ok(msg)) = stream.next().await {
-            match msg? {
+        while let Some(msg_result) = stream.next().await {
+            match msg_result? {
                 actix_ws::Message::Text(text) => return Ok(Some(text.to_string())),
                 actix_ws::Message::Close(_) => return Ok(None),
-                _ => {}
+                _ => continue,
             }
         }
-        Ok(None)
+        Ok(None) // Stream ended
     }
 
     async fn perform_auth(&self) -> Result<Option<()>> {
