@@ -17,7 +17,7 @@ doctest = false
 async-trait = "0.1.81"
 base64 = "0.22.1"
 derive-ex = "0.1.8"
-jsoncall = "0.0.3"
+jsoncall = "0.0.3"  # Latest available version is 0.0.3
 parse-display = "0.10.0"
 schemars = "0.8.22"
 serde = { version = "1.0.219", features = ["derive"] } 
@@ -32,7 +32,7 @@ actix-web-lab = { version = "0.2.0", features = ["sse"] }
 
 # Crypto/TLS
 ring = "0.17.8"
-rustls = { version = "0.22.3", features = ["dangerous_configuration"] }
+rustls = "0.22.3"  # Removed invalid feature flag
 tokio-rustls = "0.25.0"
 
 # TUI
