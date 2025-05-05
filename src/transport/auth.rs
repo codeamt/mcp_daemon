@@ -57,8 +57,9 @@ impl Keypair {
 // --- Authentication Handshake Logic ---
 
 // Server-side handshake initiation
-pub async fn server_auth_handshake<T: AsyncReadExt + AsyncWriteExt + Unpin>(
-    stream: &mut T,
+pub async fn server_auth_handshake(
+    sender: &mut actix_ws::Sender,
+    stream: &mut actix_ws::MessageStream,
     server_keypair: &Keypair,
 ) -> Result<()> {
     let mut rng = rand::SystemRandom::new();
@@ -95,8 +96,9 @@ pub async fn server_auth_handshake<T: AsyncReadExt + AsyncWriteExt + Unpin>(
 }
 
 // Client-side handshake response
-pub async fn client_auth_handshake<T: AsyncReadExt + AsyncWriteExt + Unpin>(
-    stream: &mut T,
+pub async fn client_auth_handshake(
+    sender: &mut actix_ws::Sender,
+    stream: &mut actix_ws::MessageStream,
     client_keypair: &Keypair,
 ) -> Result<()> {
     let mut server_challenge_json = String::new();

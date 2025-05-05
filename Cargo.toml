@@ -16,8 +16,8 @@ doctest = false
 [dependencies]
 async-trait = "0.1.81"
 base64 = "0.22.1"
-derive-ex = "0.1.8"
-jsoncall = "0.0.3"
+derive-ex = "0.2.0"
+jsoncall = "0.0.4"
 parse-display = "0.10.0"
 schemars = "0.8.22"
 serde = { version = "1.0.219", features = ["derive"] } 

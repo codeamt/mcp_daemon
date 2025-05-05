@@ -21,10 +21,8 @@ impl Transport for WebSocketsTransport {
     }
 
     async fn receive(&mut self) -> Result<Option<String>> {
-        use actix_ws::MessageStream;
-        
-        let mut stream = MessageStream::new(&mut self.session);
-        while let Some(msg) = stream.next().await {
+        let mut stream = self.session.message_stream();
+        while let Some(Ok(msg)) = stream.next().await {
             match msg? {
                 actix_ws::Message::Text(text) => return Ok(Some(text.to_string())),
                 actix_ws::Message::Close(_) => return Ok(None),
@@ -39,17 +37,17 @@ impl Transport for WebSocketsTransport {
         use tokio::io::{AsyncRead, AsyncWrite};
         
         // Get the underlying transport stream
-        let (mut reader, mut writer) = self.session.split().get_mut().split();
+        let (mut sender, mut stream) = self.session.split();
         
         // Check if we're acting as server or client
         if self.session.is_server() {
             // Server-side authentication
             let server_keypair = Keypair::generate()?;
-            server_auth_handshake(stream, &server_keypair).await?;
+            server_auth_handshake(&mut sender, &mut stream, &server_keypair).await?;
         } else {
             // Client-side authentication
             let client_keypair = Keypair::generate()?;
-            client_auth_handshake(stream, &client_keypair).await?;
+            client_auth_handshake(&mut sender, &mut stream, &client_keypair).await?;
         }
         
         Ok(Some(()))

@@ -17,7 +17,7 @@ impl SseTransport {
 impl Transport for SseTransport {
     async fn send(&self, message: &str) -> Result<()> {
         // Send message as an SSE event
-        self.sender.send(sse::Event::Data(sse::Data::new(message))).await;
+        self.sender.send(sse::Event::Data(sse::Data::new(message))).await?;
         Ok(()) // actix-web-lab's send is fire-and-forget for Result, need to check docs for real error handling
     }
 
