@@ -33,8 +33,24 @@ impl Transport for WebSocketsTransport {
     }
 
     async fn perform_auth(&self) -> Result<Option<()>> {
-        // Keypair authentication integration for WebSockets will be implemented here.
-        Ok(None)
+        use crate::transport::auth::{server_auth_handshake, client_auth_handshake, Keypair};
+        use tokio::io::{AsyncRead, AsyncWrite};
+        
+        // Get the underlying transport stream
+        let stream = self.session.get_mut().get_mut();
+        
+        // Check if we're acting as server or client
+        if self.session.is_server() {
+            // Server-side authentication
+            let server_keypair = Keypair::generate()?;
+            server_auth_handshake(stream, &server_keypair).await?;
+        } else {
+            // Client-side authentication
+            let client_keypair = Keypair::generate()?;
+            client_auth_handshake(stream, &client_keypair).await?;
+        }
+        
+        Ok(Some(()))
     }
 }
 
