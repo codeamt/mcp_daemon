@@ -4,21 +4,31 @@ use actix_web_lab::sse;
 use crate::Result;
 
 pub struct SseTransport {
-    sender: sse::SseSender,
+    sender: mpsc::Sender<sse::Event>,
 }
 
 impl SseTransport {
-    pub fn new(sender: sse::SseSender) -> Self {
+    pub fn new(sender: mpsc::Sender<sse::Event>) -> Self {
         Self { sender }
+    }
+
+    /// Create a new SSE transport pair (transport and SSE responder)
+    pub fn from_channel() -> (Self, sse::Sse<sse::ChannelStream>) {
+        let (tx, rx) = mpsc::channel(10);
+        let transport = Self::new(tx);
+        let sse = sse::Sse::from_infallible_receiver(rx)
+            .with_retry_duration(std::time::Duration::from_secs(10));
+        (transport, sse)
     }
 }
 
 #[async_trait]
 impl Transport for SseTransport {
     async fn send(&self, message: &str) -> Result<()> {
-        // Send message as an SSE event
-        self.sender.send(sse::Event::Data(sse::Data::new(message))).await?;
-        Ok(()) // actix-web-lab's send is fire-and-forget for Result, need to check docs for real error handling
+        self.sender.send(sse::Data::new(message).into())
+            .await
+            .map_err(|e| crate::Error::TransportError(format!("SSE send failed: {}", e)))?;
+        Ok(())
     }
 
     async fn receive(&mut self) -> Result<Option<String>> {
