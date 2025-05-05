@@ -40,5 +40,5 @@ ratatui = "0.26.0"
 crossterm = "0.28.0"
 
 # HTTP/2
-hyper = { version = "1.2.0", features = ["http2"] }
+hyper = { version = "1.2.0", features = ["http2", "client", "server", "tcp"] }
 http-body-util = "0.1.3"

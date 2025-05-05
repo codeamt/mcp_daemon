@@ -25,18 +25,34 @@ impl Http2TlsTransport {
 #[async_trait]
 impl Transport for Http2TlsTransport {
     async fn send(&self, message: &str) -> Result<()> {
-        // Send message over HTTP/2. This would involve creating a request
-        // and sending it using the hyper client.
-        println!("HTTP/2 Send: {}", message);
+        let request = Request::builder()
+            .method("POST")
+            .uri("/mcp")
+            .header("content-type", "application/json")
+            .body(Body::from(message.to_string()))
+            .map_err(|e| crate::Error::TransportError(format!("HTTP/2 request build failed: {}", e)))?;
+
+        let (mut request_sender, connection) = hyper::client::conn::handshake(TcpStream::connect("localhost:3000").await?)
+            .await
+            .map_err(|e| crate::Error::TransportError(format!("HTTP/2 handshake failed: {}", e)))?;
+
+        tokio::spawn(async move {
+            if let Err(e) = connection.await {
+                eprintln!("HTTP/2 connection error: {}", e);
+            }
+        });
+
+        request_sender.send_request(request)
+            .await
+            .map_err(|e| crate::Error::TransportError(format!("HTTP/2 send failed: {}", e)))?;
+
         Ok(())
     }
 
     async fn receive(&mut self) -> Result<Option<String>> {
-        // Receive message over HTTP/2. This would involve handling incoming
-        // requests on the server side or getting responses on the client side.
-        // For simplicity, this is a placeholder.
-        println!("HTTP/2 Receive (placeholder)");
-        Ok(None)
+        // For server implementation, we would need to handle incoming requests
+        // This client-side implementation waits for responses
+        todo!("HTTP/2 receive implementation requires full client/server state management")
     }
 
     async fn perform_auth(&self) -> Result<()> {

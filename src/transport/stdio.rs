@@ -37,8 +37,8 @@ impl Transport for StdioTransport {
         }
     }
 
-    async fn perform_auth(&self) -> Result<Option<()>> {
+    async fn perform_auth(&self) -> Result<()> {
         // Keypair authentication is not applicable to stdio
-        Ok(None)
+        Ok(())
     }
 }
