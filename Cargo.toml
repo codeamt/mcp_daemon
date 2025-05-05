@@ -41,4 +41,4 @@ crossterm = "0.28.0"
 
 # HTTP/2
 hyper = { version = "1.2.0", features = ["http2"] }
-http-body-util = "1.0.0"
+http-body-util = "0.1.3"
