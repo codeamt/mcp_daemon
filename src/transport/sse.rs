@@ -32,9 +32,8 @@ impl Transport for SseTransport {
     }
 
     async fn receive(&mut self) -> Result<Option<String>> {
-        // SSE is primarily server-to-client, so receive is not typically used.
-        // We can leave this as None or add logic for client messages if needed later.
-        Ok(None)
+        // SSE is primarily server-to-client, receive is not implemented
+        todo!("SSE client receive not implemented")
     }
 
     async fn perform_auth(&self) -> Result<Option<()>> {

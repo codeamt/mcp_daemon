@@ -87,7 +87,7 @@ pub async fn server_auth_handshake(
     let client_response: AuthResponse = serde_json::from_str(&client_response_json.trim())
         .map_err(|e| crate::Error::AuthenticationError(format!("Failed to deserialize client response: {}", e)))?;
 
-    server_keypair.verify(&client_response.public_key, &auth_challenge.challenge, &client_response.signature)?;;
+    server_keypair.verify(&client_response.public_key, &auth_challenge.challenge, &client_response.signature)?;
 
     // In a real implementation, you would now associate the client's public key with the connection
     // for future authorization checks.

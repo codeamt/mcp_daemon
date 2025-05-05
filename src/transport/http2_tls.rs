@@ -45,4 +45,3 @@ impl Transport for Http2TlsTransport {
     }
 }
 
-use super::traits::Transport; // Import the Transport trait
