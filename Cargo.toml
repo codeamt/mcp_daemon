@@ -16,7 +16,7 @@ doctest = false
 [dependencies]
 async-trait = "0.1.81"
 base64 = "0.22.1"
-derive-ex = "0.1.8"  # Latest available version is 0.1.8
+derive-ex = "0.1.8"
 jsoncall = "0.0.3"
 parse-display = "0.10.0"
 schemars = "0.8.22"
@@ -26,13 +26,13 @@ tokio = { version = "1.44.1", features = ["macros", "rt-multi-thread"] }
 url = "2.5.4"
 
 # Actix ecosystem
-actix-web = { version = "4.5.1", features = ["macros"] }
-actix-ws = "0.3.0"  # Latest stable version as of 2024-07-21
-actix-web-lab = "0.2.0"
+actix-web = { version = "4.10.2", features = ["macros"] }
+actix-ws = "0.3.0" 
+actix-web-lab = "0.24.1"
 
 # Crypto/TLS
 ring = "0.17.8"
-rustls = "0.22.3"  # Removed invalid feature flag
+rustls = "0.22.3" 
 tokio-rustls = "0.25.0"
 
 # TUI
