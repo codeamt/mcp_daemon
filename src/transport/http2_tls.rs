@@ -39,9 +39,8 @@ impl Transport for Http2TlsTransport {
         Ok(None)
     }
 
-    async fn perform_auth(&self) -> Result<Option<()>> {
-        // Keypair authentication handshake for HTTP/2/TLS will be implemented here.
-        Ok(None)
+    async fn perform_auth(&self) -> Result<()> {
+        Err(crate::Error::AuthenticationError("HTTP/2 TLS authentication not implemented".into()))
     }
 }
 

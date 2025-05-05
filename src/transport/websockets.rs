@@ -32,7 +32,7 @@ impl Transport for WebSocketsTransport {
         Ok(None) // Stream ended
     }
 
-    async fn perform_auth(&self) -> Result<Option<()>> {
+    async fn perform_auth(&self) -> Result<()> {
         use crate::transport::auth::{server_auth_handshake, client_auth_handshake, Keypair};
         use tokio::io::{AsyncRead, AsyncWrite};
         
@@ -50,7 +50,7 @@ impl Transport for WebSocketsTransport {
             client_auth_handshake(&mut sender, &mut stream, &client_keypair).await?;
         }
         
-        Ok(Some(()))
+        Ok(())
     }
 }
 

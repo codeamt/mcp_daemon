@@ -36,10 +36,8 @@ impl Transport for SseTransport {
         todo!("SSE client receive not implemented")
     }
 
-    async fn perform_auth(&self) -> Result<Option<()>> {
-        // Keypair authentication integration for SSE will need to be designed
-        // based on how the initial connection is established.
-        Ok(None)
+    async fn perform_auth(&self) -> Result<()> {
+        todo!("SSE authentication not yet implemented")
     }
 }
 

@@ -36,7 +36,7 @@ This plan outlines the steps to integrate the new features into the MCP Daemon.
     *   Define a keypair structure and the authentication protocol.
     *   Implement key generation and management (consider using a crate like `ring` or `libsodium-sys`).
     *   Integrate the authentication handshake into each transport type during connection establishment.
-    *   **Implement keypair authentication as an optional feature.** The server will include information in its initial JSON response to the client indicating if keypair authentication is required or available.
+    *   **Keypair Authentication:** Mandatory authentication using public-key cryptography to verify identity of both clients and servers during connection establishment.
     *   The client implementation will be updated to handle this information and perform the keypair authentication handshake if specified by the server.
 
 7.  **CLI Enhancements with Ratatui:**

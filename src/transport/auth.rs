@@ -102,10 +102,13 @@ pub async fn client_auth_handshake(
     stream: &mut actix_ws::MessageStream,
     client_keypair: &Keypair,
 ) -> Result<()> {
-    let mut server_challenge_json = String::new();
-    let mut reader = tokio::io::BufReader::new(stream);
-    reader.read_line(&mut server_challenge_json).await
-        .map_err(|e| crate::Error::AuthenticationError(format!("Failed to receive server challenge: {}", e)))?;
+    let msg = stream.next().await
+        .ok_or(crate::Error::AuthenticationError("Connection closed during handshake".into()))??;
+    
+    let server_challenge_json = match msg {
+        actix_ws::Message::Text(text) => text,
+        _ => return Err(crate::Error::AuthenticationError("Unexpected message type during handshake".into())),
+    };
 
     let server_challenge: AuthChallenge = serde_json::from_str(&server_challenge_json.trim())
         .map_err(|e| crate::Error::AuthenticationError(format!("Failed to deserialize server challenge: {}", e)))?;
