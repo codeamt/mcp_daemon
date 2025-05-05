@@ -27,7 +27,7 @@ url = "2.5.4"
 
 # Actix ecosystem
 actix-web = { version = "4.5.1", features = ["macros"] }
-actix-ws = "0.2.6"
+actix-ws = "0.3.0"  # Latest stable version as of 2024-07-21
 actix-web-lab = { version = "0.2.0", features = ["sse"] }
 
 # Crypto/TLS

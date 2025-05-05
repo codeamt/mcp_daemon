@@ -21,15 +21,17 @@ impl Transport for WebSocketsTransport {
     }
 
     async fn receive(&mut self) -> Result<Option<String>> {
-        while let Some(msg) = self.session.next().await {
-            match msg {
-                Ok(actix_ws::Message::Text(text)) => return Ok(Some(text.to_string())),
-                Ok(actix_ws::Message::Close(_)) => return Ok(None), // Connection closed
-                Ok(_) => {},
-                Err(e) => return Err(crate::Error::TransportError(format!("Websocket receive error: {}", e))),
+        use actix_ws::MessageStream;
+        
+        let mut stream = MessageStream::new(&mut self.session);
+        while let Some(msg) = stream.next().await {
+            match msg? {
+                actix_ws::Message::Text(text) => return Ok(Some(text.to_string())),
+                actix_ws::Message::Close(_) => return Ok(None),
+                _ => {}
             }
         }
-        Ok(None) // Stream ended
+        Ok(None)
     }
 
     async fn perform_auth(&self) -> Result<Option<()>> {
@@ -37,7 +39,7 @@ impl Transport for WebSocketsTransport {
         use tokio::io::{AsyncRead, AsyncWrite};
         
         // Get the underlying transport stream
-        let stream = self.session.get_mut().get_mut();
+        let (mut reader, mut writer) = self.session.split().get_mut().split();
         
         // Check if we're acting as server or client
         if self.session.is_server() {
