@@ -54,4 +54,3 @@ impl Transport for WebSocketsTransport {
     }
 }
 
-use super::traits::Transport; // Import the Transport trait

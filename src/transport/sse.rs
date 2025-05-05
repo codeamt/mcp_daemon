@@ -48,4 +48,3 @@ impl Transport for SseTransport {
 // proper error handling for sse::SseSender::send and potentially a way for the
 // server to manage multiple SSE connections.
 
-use super::traits::Transport; // Import the Transport trait
