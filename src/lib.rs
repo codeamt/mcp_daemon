@@ -129,6 +129,12 @@ pub mod utils;
 /// including HTTP/2 with TLS, WebSockets, and stdio.
 pub mod transport;
 
+/// Command-line interface and TUI for the MCP daemon
+///
+/// This module provides a command-line interface and text-based user interface
+/// for managing the MCP daemon, including configuration, monitoring, and control.
+pub mod cli;
+
 // Re-export dependencies and common types
 
 /// Re-export of the jsoncall crate
@@ -158,7 +164,7 @@ pub use jsoncall::bail;
 pub use jsoncall::bail_public;
 
 #[cfg(feature = "sse")]
-pub mod sse;
+pub use transport::httpd;
 
 #[cfg(feature = "sse")]
-pub use sse::http_server::run_http_server;
+pub use transport::httpd::run_http_server;

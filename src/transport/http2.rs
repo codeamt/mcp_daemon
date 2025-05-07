@@ -331,6 +331,12 @@ pub struct ServerHttp2Transport {
     is_open: Arc<AtomicBool>,
 }
 
+impl Default for ServerHttp2Transport {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ServerHttp2Transport {
     /// Creates a new HTTP/2 server transport
     pub fn new() -> Self {

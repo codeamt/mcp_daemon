@@ -4,10 +4,8 @@
 //! Supports both HTTP/1.1 and HTTP/2 with TLS.
 
 use async_trait::async_trait;
-use super::{Message, Result, Transport};
+use super::{Message, Result, Transport, ServerSseTransport};
 use super::websockets::{ClientWsTransport, ServerWsTransport};
-#[cfg(feature = "sse")]
-use super::sse::ServerSseTransport;
 
 /// Server-side HTTP transport variants
 #[derive(Debug, Clone)]
@@ -125,6 +123,12 @@ impl Default for Http2Config {
 #[derive(Debug, Clone)]
 pub struct Http2Builder {
     config: Http2Config,
+}
+
+impl Default for Http2Builder {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Http2Builder {

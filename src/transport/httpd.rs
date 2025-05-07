@@ -8,7 +8,7 @@ use anyhow::Result;
 use uuid::Uuid;
 
 use crate::server::Server;
-use crate::sse::middleware::{AuthConfig, JwtAuth};
+use crate::transport::middleware::{AuthConfig, JwtAuth};
 use crate::transport::ServerHttpTransport;
 use crate::transport::{handle_ws_connection, Message, ServerWsTransport};
 use crate::transport::ServerSseTransport;
@@ -77,19 +77,15 @@ pub struct TlsConfig {
     pub key_path: String,
 }
 
+// Type alias for the complex build_server function signature
+type BuildServerFn = Arc<dyn Fn(ServerHttpTransport) -> futures::future::BoxFuture<'static, Result<Box<dyn Server>>> + Send + Sync>;
+
 #[derive(Clone)]
 /// State for managing SSE sessions
 pub struct SessionState {
     sessions: Arc<Mutex<HashMap<String, ServerHttpTransport>>>,
     port: u16,
-    build_server: Arc<
-        dyn Fn(
-                ServerHttpTransport,
-            )
-                -> futures::future::BoxFuture<'static, Result<Box<dyn Server>>>
-            + Send
-            + Sync,
-    >,
+    build_server: BuildServerFn,
 }
 
 /// Run a server instance with the specified transport
@@ -142,7 +138,7 @@ where
     });
 
     // Add TLS if configured
-    if let Some(_) = &config.tls {
+    if config.tls.is_some() {
         // TLS is not fully implemented yet
         error!("TLS support is not fully implemented yet");
         info!("Falling back to non-TLS connection");
@@ -160,14 +156,7 @@ pub async fn http_server(
     port: u16,
     sessions: Arc<Mutex<HashMap<String, ServerHttpTransport>>>,
     auth_config: Option<AuthConfig>,
-    build_server: Arc<
-        dyn Fn(
-                ServerHttpTransport,
-            )
-                -> futures::future::BoxFuture<'static, Result<Box<dyn Server>>>
-            + Send
-            + Sync,
-    >,
+    build_server: BuildServerFn,
 ) -> std::result::Result<(), std::io::Error> {
     let session_state = SessionState {
         sessions,

@@ -8,6 +8,9 @@ use serde::{Deserialize, Serialize};
 mod error;
 pub use error::{TransportError, TransportErrorCode};
 
+pub mod middleware;
+pub use self::middleware::{AuthConfig, JwtAuth};
+
 /// Result type for transport operations
 pub type Result<T> = std::result::Result<T, TransportError>;
 
@@ -15,10 +18,15 @@ mod stdio;
 pub use stdio::*;
 mod inmemory;
 pub use inmemory::*;
+
 #[cfg(feature = "sse")]
-mod sse;
+pub mod sse;
 #[cfg(feature = "sse")]
-pub use sse::*;
+pub use self::sse::ServerSseTransport;
+
+#[cfg(feature = "sse")]
+pub mod httpd;
+
 mod websockets;
 pub use websockets::*;
 mod http;
