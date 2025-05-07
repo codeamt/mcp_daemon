@@ -4,7 +4,7 @@
 //! with the MCP protocol. It's organized into several submodules:
 //!
 //! - `types`: Core type definitions for MCP requests and responses
-//! - `types_ex`: Extended types with additional functionality 
+//! - `types_ex`: Extended types with additional functionality
 //! - `schema_ext`: Extensions and convenience methods for core schema types
 //! - `default_impls`: Default implementations for schema types
 //! - `protocol`: Protocol-specific constants and definitions
@@ -12,6 +12,8 @@
 //!
 //! Most types from `types`, `types_ex` and `annotations` are re-exported at the schema module
 //! level for convenience.
+
+#![allow(clippy::module_inception)]
 
 pub mod schema;
 pub mod schema_ext;

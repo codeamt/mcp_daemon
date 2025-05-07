@@ -29,6 +29,10 @@ Add this to your `Cargo.toml`:
 mcp_daemon = "0.3.0"
 ```
 
+OR
+
+Run `cargo add mcp_daemon`
+
 ## Usage
 
 ### Client Example
@@ -100,6 +104,63 @@ cargo doc --open
 - **schema**: Schema definitions for the MCP protocol
 - **error**: Error handling for the MCP protocol
 - **utility**: Utility functions, macros, and types
+- **transport**: Transport layer implementations (HTTP/2, WebSockets, etc.)
+
+## TLS Configuration
+
+### Self-Signed Certificates for Development
+
+For local development, you can generate self-signed certificates using the included script:
+
+```bash
+# Generate certificates for localhost
+./scripts/generate_cert.sh
+
+# Generate certificates with custom options
+./scripts/generate_cert.sh --dir my_certs --domain example.com --days 730
+```
+
+Then use the certificates in your server configuration:
+
+```rust
+use mcp_daemon::transport::http2::{Http2ServerConfig, TlsConfig};
+use std::net::SocketAddr;
+
+let config = Http2ServerConfig {
+    addr: "127.0.0.1:8443".parse().unwrap(),
+    tls_config: Some(TlsConfig::Manual {
+        cert_path: "certs/localhost.example.crt".to_string(),
+        key_path: "certs/localhost.example.key".to_string(),
+    }),
+};
+```
+
+### Let's Encrypt Integration
+
+For production environments, you can use Let's Encrypt for automatic certificate management by enabling the `acme` feature:
+
+```toml
+[dependencies]
+mcp_daemon = { version = "0.3.0", features = ["acme"] }
+```
+
+Then configure your server to use ACME:
+
+```rust
+use mcp_daemon::transport::http2::{Http2ServerConfig, TlsConfig};
+use std::net::SocketAddr;
+use std::path::PathBuf;
+
+let config = Http2ServerConfig {
+    addr: "0.0.0.0:443".parse().unwrap(),
+    tls_config: Some(TlsConfig::Acme {
+        domains: vec!["example.com".to_string()],
+        contact_email: "admin@example.com".to_string(),
+        cache_dir: Some(PathBuf::from(".certificates")),
+        use_staging: false, // Set to true for testing
+    }),
+};
+```
 
 ## Contributing
 

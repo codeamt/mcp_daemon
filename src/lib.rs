@@ -1,5 +1,3 @@
-#![doc(test(attr(exclude(tests))))]
-
 //! # MCP Daemon: A Rust implementation of the Model Context Protocol (MCP)
 //!
 //! This crate provides a standards-compliant implementation of the [Model Context Protocol (MCP)](https://spec.modelcontextprotocol.io/),
@@ -125,6 +123,12 @@ pub mod common;
 /// MCP protocol.
 pub mod utils;
 
+/// Transport implementations for the MCP protocol
+///
+/// This module provides transport implementations for the MCP protocol,
+/// including HTTP/2 with TLS, WebSockets, and stdio.
+pub mod transport;
+
 // Re-export dependencies and common types
 
 /// Re-export of the jsoncall crate
@@ -152,3 +156,9 @@ pub use jsoncall::bail;
 
 /// Macro for returning a public error from a function
 pub use jsoncall::bail_public;
+
+#[cfg(feature = "sse")]
+pub mod sse;
+
+#[cfg(feature = "sse")]
+pub use sse::http_server::run_http_server;

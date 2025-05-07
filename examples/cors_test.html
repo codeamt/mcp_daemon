@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test for HTTP/2 Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>CORS Test for HTTP/2 Server</h1>
+    <div class="container">
+        <div class="card">
+            <h2>Test CORS Preflight (OPTIONS)</h2>
+            <p>This will send an OPTIONS request to test CORS preflight.</p>
+            <button id="testPreflight">Test Preflight</button>
+            <h3>Response:</h3>
+            <pre id="preflightResponse">Click the button to see the response</pre>
+        </div>
+        
+        <div class="card">
+            <h2>Test POST Request</h2>
+            <p>This will send a POST request with JSON-RPC payload.</p>
+            <button id="testPost">Test POST</button>
+            <h3>Response:</h3>
+            <pre id="postResponse">Click the button to see the response</pre>
+        </div>
+    </div>
+
+    <script>
+        // Server URL
+        const serverUrl = 'https://127.0.0.1:8090/message';
+        
+        // Test CORS Preflight
+        document.getElementById('testPreflight').addEventListener('click', async () => {
+            const preflightResponseElement = document.getElementById('preflightResponse');
+            preflightResponseElement.textContent = 'Sending request...';
+            
+            try {
+                // Create a custom fetch request to see the OPTIONS request
+                const response = await fetch(serverUrl, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                // Get response headers
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                // Display response
+                preflightResponseElement.textContent = 
+                    `Status: ${response.status} ${response.statusText}\n\n` +
+                    `Headers:\n${JSON.stringify(headers, null, 2)}`;
+            } catch (error) {
+                preflightResponseElement.textContent = `Error: ${error.message}`;
+            }
+        });
+        
+        // Test POST Request
+        document.getElementById('testPost').addEventListener('click', async () => {
+            const postResponseElement = document.getElementById('postResponse');
+            postResponseElement.textContent = 'Sending request...';
+            
+            try {
+                const payload = {
+                    jsonrpc: '2.0',
+                    id: 1,
+                    method: 'ping'
+                };
+                
+                const response = await fetch(serverUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                // Get response data
+                const data = await response.text();
+                
+                // Get response headers
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                // Display response
+                postResponseElement.textContent = 
+                    `Status: ${response.status} ${response.statusText}\n\n` +
+                    `Headers:\n${JSON.stringify(headers, null, 2)}\n\n` +
+                    `Body:\n${data}`;
+            } catch (error) {
+                postResponseElement.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

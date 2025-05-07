@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["bail","bail_public"],"mod":["client","common","error","request","schema","server","sse","transport","utility","utils"],"struct":["Error","ErrorCode","SessionError"],"type":["Result","SessionResult"]};

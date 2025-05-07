@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["annotations","default_impls","protocol","schema","schema_ext","types_ex"]};
