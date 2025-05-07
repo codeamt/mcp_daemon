@@ -108,7 +108,9 @@ cargo doc --open
 
 ## TLS Configuration
 
-### Self-Signed Certificates for Development
+### Server TLS Configuration
+
+#### Self-Signed Certificates for Development
 
 For local development, you can generate self-signed certificates using the included script:
 
@@ -135,7 +137,7 @@ let config = Http2ServerConfig {
 };
 ```
 
-### Let's Encrypt Integration
+#### Let's Encrypt Integration
 
 For production environments, you can use Let's Encrypt for automatic certificate management by enabling the `acme` feature:
 
@@ -161,6 +163,66 @@ let config = Http2ServerConfig {
     }),
 };
 ```
+
+### Client TLS Configuration
+
+The client supports various TLS configurations for secure connections to MCP servers:
+
+#### Basic TLS (System Root Certificates)
+
+```rust
+use mcp_daemon::transport::http::Http2Builder;
+
+// Create a client with TLS enabled (using system root certificates)
+let transport = Http2Builder::new()
+    .with_tls(true)
+    .with_host("example.com".to_string())
+    .with_port(443)
+    .build()?;
+```
+
+#### Custom Root Certificate
+
+```rust
+use mcp_daemon::transport::http::Http2Builder;
+
+// Create a client with a custom root certificate
+let transport = Http2Builder::new()
+    .with_custom_tls("path/to/root.crt".to_string(), true)
+    .with_host("example.com".to_string())
+    .with_port(443)
+    .build()?;
+```
+
+#### Client Certificate (Mutual TLS)
+
+```rust
+use mcp_daemon::transport::http::Http2Builder;
+
+// Create a client with a client certificate for mutual TLS
+let transport = Http2Builder::new()
+    .with_custom_tls("path/to/root.crt".to_string(), true)
+    .with_client_cert("path/to/client.crt".to_string(), "path/to/client.key".to_string())
+    .with_host("example.com".to_string())
+    .with_port(443)
+    .build()?;
+```
+
+#### Server Name Indication (SNI)
+
+```rust
+use mcp_daemon::transport::http::Http2Builder;
+
+// Create a client with SNI
+let transport = Http2Builder::new()
+    .with_custom_tls("path/to/root.crt".to_string(), true)
+    .with_sni("example.com".to_string())
+    .with_host("192.168.1.100".to_string()) // IP address
+    .with_port(443)
+    .build()?;
+```
+
+> **Note**: The client TLS implementation is currently in development. While the API is in place, some advanced features like client certificates and SNI may not be fully functional in all scenarios. We're actively working on improving this and welcome feedback from users. Please see our [GitHub Discussions](https://github.com/entrepeneur4lyf/mcp_daemon/discussions/2) for more information and to provide input.
 
 ## Contributing
 

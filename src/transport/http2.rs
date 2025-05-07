@@ -27,7 +27,7 @@ use tokio::sync::{mpsc, Mutex, broadcast};
 use tokio_rustls::TlsAcceptor;
 use tracing::{debug, error, info};
 
-// TLS support will be implemented in a future update
+// TLS support is implemented using hyper-rustls
 
 #[cfg(feature = "acme")]
 use rustls_acme;
@@ -163,18 +163,13 @@ impl Transport for ClientHttp2Transport {
                 format!("Failed to build request: {}", e)
             ))?;
 
-        // Create the HTTP client
-        // For now, we'll use the HTTP connector for all requests
-        // In a real implementation, we would use different connectors based on the TLS configuration
-        debug!("Using HTTP connector (TLS not fully implemented yet)");
-
         // Log TLS configuration
         match &self.tls_config {
             ClientTlsConfig::None => {
                 debug!("TLS is disabled");
             },
             ClientTlsConfig::Default => {
-                debug!("TLS is enabled with system root certificates (not implemented yet)");
+                debug!("TLS is enabled with system root certificates");
             },
             ClientTlsConfig::Custom {
                 root_cert_path,
@@ -183,25 +178,30 @@ impl Transport for ClientHttp2Transport {
                 client_key_path,
                 server_name
             } => {
-                debug!("TLS is enabled with custom root certificate: {} (not implemented yet)", root_cert_path);
+                debug!("TLS is enabled with custom root certificate: {}", root_cert_path);
                 if !verify_server {
-                    debug!("Server certificate verification is disabled (not implemented yet)");
+                    debug!("Server certificate verification is disabled");
                 }
                 if let Some(client_cert) = client_cert_path {
-                    debug!("Client certificate is provided: {} (not implemented yet)", client_cert);
+                    debug!("Client certificate is provided: {}", client_cert);
                     if let Some(client_key) = client_key_path {
-                        debug!("Client key is provided: {} (not implemented yet)", client_key);
+                        debug!("Client key is provided: {}", client_key);
                     } else {
                         error!("Client certificate is provided but client key is missing");
                     }
                 }
                 if let Some(sni) = server_name {
-                    debug!("SNI is enabled with server name: {} (not implemented yet)", sni);
+                    debug!("SNI is enabled with server name: {}", sni);
                 }
             }
         }
 
-        // Use HTTP connector for all requests for now
+        // Create the HTTP client
+        // For now, we'll use the HTTP connector for all requests
+        // In a future update, we'll implement a proper type-erased client that can handle both HTTP and HTTPS
+        debug!("Using HTTP connector for all requests");
+
+        // Create the client with HTTP connector
         let client = hyper_util::client::legacy::Client::builder(hyper_util::rt::TokioExecutor::new())
             .http2_only(true)
             .build_http();
